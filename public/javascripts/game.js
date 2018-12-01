@@ -8,7 +8,7 @@ var config = {
     default: 'arcade',
     arcade: {
       debug: false,
-      gravity: { y: 300 }
+      gravity: { y: 600 }
     }
   },
   scene: {
@@ -28,7 +28,6 @@ function preload() {
   this.load.image('star', 'assets/player-sprite/star_gold.png');
   this.load.spritesheet('dude', 'assets/player-sprite/dude.png', {frameWidth: 32, frameHeight: 48 });
 
-   // {frameWidth: 32, frameHeight: 48 })
   //background
   this.load.image('ground', 'assets/player-sprite/platform.png');
   this.load.image('background', 'assets/Magic-Cliffs-Environment/PREVIEWS/magic-cliffs.png');
