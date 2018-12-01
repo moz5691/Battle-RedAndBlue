@@ -3,6 +3,7 @@ const router = express.Router();
 const Game = require('./../models/Game');
 
 /* GET home page. */
+
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'This is title page, check /routes/index.js' });
 });

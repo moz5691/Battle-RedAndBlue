@@ -8,12 +8,21 @@ const keys = require('./config/keys');
 require('./models/User');
 require('./services/passport');
 
+
 const { mongoose } = require('./db/mongoose');
 
 const indexRouter = require('./routes/index');
 const authRouter = require('./routes/authRoutes');
 
-const app = express();
+var http = require('http');
+var app = express();
+var server = http.createServer(app);
+
+var io = require('socket.io').listen(server);
+
+//socket io routing
+require('./sockets/game-socket')(io);
+
 // helmet is just middleware -- security,
 app.use(helmet());
 
@@ -56,6 +65,6 @@ app.use('/', indexRouter);
 app.use('/', authRouter);
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`server started on port ${PORT}`);
 });
