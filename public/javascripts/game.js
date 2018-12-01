@@ -43,11 +43,11 @@ function create() {
 
         platforms = this.physics.add.staticGroup();
 
-        platforms.create(400, 568, 'ground').setScale(2).refreshBody();
+        platforms.create(400, 538, 'ground').setScale(2).refreshBody();
 
-        platforms.create(600, 400, 'clouds').setScale(.2);
-        platforms.create(50, 250, 'clouds').setScale(.3);
-        platforms.create(750, 220, 'clouds').setScale(.5);
+        platforms.create(600, 400, 'clouds').setScale(.3, .2);
+        platforms.create(50, 250, 'clouds').setScale(.7, .2);
+        platforms.create(750, 220, 'clouds').setScale(.5, .2);
 
   this.anims.create({
             key: 'left',
