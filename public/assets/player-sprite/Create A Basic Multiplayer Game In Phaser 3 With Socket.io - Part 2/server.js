@@ -1,7 +1,9 @@
-// const db = require('./models');
+var express = require('express');
+var app = express();
+var server = require('http').Server(app);
+var io = require('socket.io').listen(server);
 
-module.exports = function(io) {
-  const players = {};
+var players = {};
 var star = {
   x: Math.floor(Math.random() * 700) + 50,
   y: Math.floor(Math.random() * 500) + 50
@@ -11,7 +13,13 @@ var scores = {
   red: 0
 };
 
-  io.on('connection', function (socket) {
+app.use(express.static(__dirname + '/public'));
+
+app.get('/', function (req, res) {
+  res.sendFile(__dirname + '/index.html');
+});
+
+io.on('connection', function (socket) {
   console.log('a user connected: ', socket.id);
   // create a new player and add it to our players object
   players[socket.id] = {
@@ -42,6 +50,7 @@ var scores = {
   socket.on('playerMovement', function (movementData) {
     players[socket.id].x = movementData.x;
     players[socket.id].y = movementData.y;
+    players[socket.id].rotation = movementData.rotation;
     // emit a message to all players about the player that moved
     socket.broadcast.emit('playerMoved', players[socket.id]);
   });
@@ -58,4 +67,7 @@ var scores = {
     io.emit('scoreUpdate', scores);
   });
 });
-}
+
+server.listen(8081, function () {
+  console.log(`Listening on ${server.address().port}`);
+});
