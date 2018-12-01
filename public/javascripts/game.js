@@ -3,6 +3,7 @@ var config = {
   parent: 'phaser-example',
   width: 800,
   height: 600,
+  backgroundColor: '#a1f2ec',
   physics: {
     default: 'arcade',
     arcade: {
@@ -29,8 +30,10 @@ function preload() {
 
    // {frameWidth: 32, frameHeight: 48 })
   //background
-  this.load.image('background', 'assets/Magic-Cliffs-Environment/PREVIEWS/magic-cliffs.png');
   this.load.image('ground', 'assets/player-sprite/platform.png');
+  this.load.image('background', 'assets/Magic-Cliffs-Environment/PREVIEWS/magic-cliffs.png');
+  this.load.image('sky', 'assets/Magic-Cliffs-Environment/PNG/sky.png');
+  this.load.image('clouds', 'assets/Magic-Cliffs-Environment/PNG/clouds.png');
 }
 
 function create() {
@@ -43,9 +46,9 @@ function create() {
 
         platforms.create(400, 568, 'ground').setScale(2).refreshBody();
 
-        platforms.create(600, 400, 'ground');
-        platforms.create(50, 250, 'ground');
-        platforms.create(750, 220, 'ground');
+        platforms.create(600, 400, 'clouds').setScale(.2);
+        platforms.create(50, 250, 'clouds').setScale(.3);
+        platforms.create(750, 220, 'clouds').setScale(.5);
 
   this.anims.create({
             key: 'left',
