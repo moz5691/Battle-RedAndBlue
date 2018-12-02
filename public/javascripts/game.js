@@ -3,11 +3,12 @@ var config = {
   parent: 'phaser-example',
   width: 800,
   height: 600,
+  backgroundColor: '#a1f2ec',
   physics: {
     default: 'arcade',
     arcade: {
       debug: false,
-      gravity: { y: 0 }
+      gravity: { y: 600 }
     }
   },
   scene: {
@@ -17,17 +18,57 @@ var config = {
   } 
 };
 
+var platforms;
+var cursors;
+
 var game = new Phaser.Game(config);
 
 function preload() {
-  this.load.image('ship', 'assets/player-sprite/spaceShips_001.png');
-  this.load.image('otherPlayer', 'assets/player-sprite/enemyBlack5.png');
+  this.load.spritesheet('otherPlayer', 'assets/player-sprite/otherdude.png', {frameWidth: 32, frameHeight: 48 });
   this.load.image('star', 'assets/player-sprite/star_gold.png');
+  this.load.spritesheet('dude', 'assets/player-sprite/dude.png', {frameWidth: 32, frameHeight: 48 });
+
+  //background
+  this.load.image('ground', 'assets/player-sprite/platform.png');
+  this.load.image('background', 'assets/Magic-Cliffs-Environment/PREVIEWS/magic-cliffs.png');
+  this.load.image('sky', 'assets/Magic-Cliffs-Environment/PNG/sky.png');
+  this.load.image('clouds', 'assets/Magic-Cliffs-Environment/PNG/clouds.png');
 }
 
 function create() {
   var self = this;
   this.socket = io();
+
+  this.add.image(800, 500, 'background').setScale(1);
+
+        platforms = this.physics.add.staticGroup();
+
+        platforms.create(400, 538, 'ground').setScale(2).refreshBody();
+
+        platforms.create(600, 400, 'clouds').setScale(.3, .2);
+        platforms.create(50, 250, 'clouds').setScale(.7, .2);
+        platforms.create(750, 220, 'clouds').setScale(.5, .2);
+
+  this.anims.create({
+            key: 'left',
+            frames: this.anims.generateFrameNumbers('dude', { start: 0, end: 3 }),
+            frameRate: 10,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'turn',
+            frames: [ { key: 'dude', frame: 4 } ],
+            frameRate: 20
+        });
+
+        this.anims.create({
+            key: 'right',
+            frames: this.anims.generateFrameNumbers('dude', { start: 5, end: 8 }),
+            frameRate: 10,
+            repeat: -1
+        });
+
   this.otherPlayers = this.physics.add.group();
   this.socket.on('currentPlayers', function (players) {
     Object.keys(players).forEach(function (id) {
@@ -69,65 +110,75 @@ function create() {
   this.socket.on('starLocation', function (starLocation) {
     if (self.star) self.star.destroy();
     self.star = self.physics.add.image(starLocation.x, starLocation.y, 'star');
-    self.physics.add.overlap(self.ship, self.star, function () {
+    self.physics.add.overlap(self.dude, self.star, function () {
       this.socket.emit('starCollected');
     }, null, self);
   });
 }
 
 function addPlayer(self, playerInfo) {
-  self.ship = self.physics.add.image(playerInfo.x, playerInfo.y, 'ship').setOrigin(0.5, 0.5).setDisplaySize(53, 40);
+  self.dude = self.physics.add.sprite(playerInfo.x, playerInfo.y, 'dude').setOrigin(0.5, 0.5);
   if (playerInfo.team === 'blue') {
-    self.ship.setTint(0x0000ff);
+    self.dude.setTint(0x0000ff);
   } else {
-    self.ship.setTint(0xff0000);
+    self.dude.setTint(0xff0000);
   }
-  self.ship.setDrag(100);
-  self.ship.setAngularDrag(100);
-  self.ship.setMaxVelocity(200);
+
+  self.dude.setBounce(0.2);
+  self.physics.add.collider(self.dude, platforms);
+
 }
 
 function addOtherPlayers(self, playerInfo) {
-  const otherPlayer = self.add.sprite(playerInfo.x, playerInfo.y, 'otherPlayer').setOrigin(0.5, 0.5).setDisplaySize(53, 40);
+  const otherPlayer = self.add.sprite(playerInfo.x, playerInfo.y, 'otherPlayer').setOrigin(0.5, 0.5);
   if (playerInfo.team === 'blue') {
     otherPlayer.setTint(0x0000ff);
   } else {
     otherPlayer.setTint(0xff0000);
   }
   otherPlayer.playerId = playerInfo.playerId;
+
+  self.physics.add.collider(otherPlayer, platforms);
   self.otherPlayers.add(otherPlayer);
 }
 
 function update() {
-  if (this.ship) {
+
+let player = this.dude
+  if (player) {
     if (this.cursors.left.isDown) {
-      this.ship.setAngularVelocity(-150);
+      player.setVelocityX(-160);
+      player.anims.play('left', true);
     } else if (this.cursors.right.isDown) {
-      this.ship.setAngularVelocity(150);
+      player.setVelocityX(160);
+      player.anims.play('right', true);
     } else {
-      this.ship.setAngularVelocity(0);
+      player.setVelocityX(0);
+      player.anims.play('turn');
     }
-  
-    if (this.cursors.up.isDown) {
-      this.physics.velocityFromRotation(this.ship.rotation + 1.5, 100, this.ship.body.acceleration);
-    } else {
-      this.ship.setAcceleration(0);
+
+    this.input.keyboard.on('keydown_UP', function (event) {
+        player.setVelocityY(-400);
+        jumpCount = 1;
+        jumpTime = new Date().getTime();
+    if (jumpCount === 1 && ((new Date().getTime() - jumpTime) < 1500)) {
+        player.setVelocityY(-300);
+        jumpCount = 0;
     }
+});
   
-    this.physics.world.wrap(this.ship, 5);
+    this.physics.world.wrap(player, 5);
 
     // emit player movement
-    var x = this.ship.x;
-    var y = this.ship.y;
-    var r = this.ship.rotation;
-    if (this.ship.oldPosition && (x !== this.ship.oldPosition.x || y !== this.ship.oldPosition.y || r !== this.ship.oldPosition.rotation)) {
-      this.socket.emit('playerMovement', { x: this.ship.x, y: this.ship.y, rotation: this.ship.rotation });
+    var x = player.x;
+    var y = player.y;
+    if (player.oldPosition && (x !== player.oldPosition.x || y !== player.oldPosition.y)) {
+      this.socket.emit('playerMovement', { x: player.x, y: player.y });
     }
     // save old position data
-    this.ship.oldPosition = {
-      x: this.ship.x,
-      y: this.ship.y,
-      rotation: this.ship.rotation
+    player.oldPosition = {
+      x: player.x,
+      y: player.y,
     };
   }
 }
