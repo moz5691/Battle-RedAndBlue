@@ -8,7 +8,6 @@ const keys = require('./config/keys');
 require('./models/User');
 require('./services/passport');
 
-
 const { mongoose } = require('./db/mongoose');
 
 const indexRouter = require('./routes/index');
@@ -21,7 +20,7 @@ var server = http.createServer(app);
 var io = require('socket.io').listen(server);
 
 //socket io routing
-require('./sockets/game-socket')(io);
+// require('./sockets/game-socket')(io);
 
 // helmet is just middleware -- security,
 app.use(helmet());
