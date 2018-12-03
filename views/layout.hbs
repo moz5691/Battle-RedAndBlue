@@ -4,11 +4,12 @@
 <head>
   {{!-- Required meta tag --}}
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  {{!-- Materialize CSS --}}
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"> {{!-- Materialize CSS --}}
   <!-- Compiled and minified CSS -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
-
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/3.15.1/phaser.min.js"></script>
   <title>{{title}}</title>
   <link rel='stylesheet' href='/stylesheets/style.css' />
 </head>
@@ -18,8 +19,7 @@
   <div class="container">
     {{{body}}}
   </div>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/3.15.1/phaser.min.js"></script>
+
   {{!--
   <script src="javascripts/game.js"></script> --}}
 </body>

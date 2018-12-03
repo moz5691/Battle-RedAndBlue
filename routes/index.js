@@ -19,5 +19,8 @@ router.get('/rooms', (req, res, next) => {
 // define API here --- server side ///
 
 ///////////////
+router.get('/test', (req, res, next) => {//for test maryam
+  res.render('rooms', { title: 'this is rooms-page, check /routes/room' });
+});
 
 module.exports = router;
