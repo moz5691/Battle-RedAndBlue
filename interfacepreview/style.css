@@ -1,0 +1,43 @@
+#canvas {
+  width: 800px;
+  height: 600px;
+}
+.iconGo {
+  position: relative;
+  left: 10px;
+  top: 7px;
+}
+
+.mainTitle {
+  position: relative;
+  top: 80px;
+  left: 200px;
+}
+.startText {
+  position: relative;
+  top: 400px;
+  right: 170px;
+}
+.charGroup {
+  position: relative;
+  left: 280px;
+  top: 150px;
+}
+
+#selectButton {
+  position: relative;
+  left: 650px;
+  top: 250px;
+}
+
+#selectButton2 {
+  position: relative;
+  left: 660px;
+  top: 240px;
+}
+
+.roomGroup {
+  position: relative;
+  left: 130px;
+  top: 150px;
+}
